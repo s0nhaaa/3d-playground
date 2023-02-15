@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "@sonhaaa/3d-playground",
-  "version": "0.0.1",
+  "version": "0.0.16",
   "description": "Experiment components built on top of @react-three/fiber",
   "main": "build/index.js",
   "files": [
@@ -9,7 +9,6 @@
   ],
   "types": "build/index.d.ts",
   "scripts": {
-    "test": "jest",
     "build:clean": "rimraf build",
     "build:rollup": "rollup -c",
     "build": "npm-run-all build:clean build:rollup",
@@ -80,5 +79,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "zustand": "^4.3.3"
   }
 }
