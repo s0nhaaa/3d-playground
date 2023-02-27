@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "@sonhaaa/3d-playground",
-  "version": "0.0.16",
+  "version": "0.0.18",
   "description": "Experiment components built on top of @react-three/fiber",
   "main": "build/index.js",
   "files": [

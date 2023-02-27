@@ -1,18 +1,17 @@
 import { Canvas } from '@react-three/fiber'
 import { Debug, Physics, RigidBody } from '@react-three/rapier'
-import { CharacterControl, useCustomAnimation } from '@sonhaaa/test-playground'
-import { useEffect } from 'react'
+import { CharacterControl } from '@sonhaaa/test-playground'
+import { useState } from 'react'
 
+// import { useEffect } from 'react'
 import Boy from './Boy'
 
 function App() {
-  // useEffect(() => {
-  //   console.log(anim)
-  // }, [anim])
+  const [cC, set] = useState(true)
 
   return (
     <div className="app">
-      <Canvas>
+      <Canvas id="abc">
         <gridHelper />
         <ambientLight intensity={1} />
 
@@ -29,6 +28,8 @@ function App() {
             </mesh>
           </RigidBody>
           <CharacterControl
+            canControl={cC}
+            targetListener="abc"
             polarAngle={[0.5, Math.PI / 2]}
             cameraPosition={[17, 6, 17]}
             initialPosition={[4, 5, 1]}
@@ -37,6 +38,7 @@ function App() {
           </CharacterControl>
         </Physics>
       </Canvas>
+      <button onClick={() => set(!cC)}>Off</button>
     </div>
   )
 }

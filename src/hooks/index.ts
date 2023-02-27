@@ -1,2 +1,1 @@
-export * from './useControls'
-export * from './useCustomAnimation'
+export * from './useCharacterControl'

@@ -1,12 +1,13 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { CuboidCollider, RapierRigidBody, RigidBody } from '@react-three/rapier'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Group, Quaternion, Vector3 } from 'three'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
 import { directionOffset } from '../../helpers'
 import { useControls } from '../../hooks/useControls'
+import { usePlayerStore } from '../../stores/player'
 
 const walkDirection = new Vector3()
 const rotateAngle = new Vector3(0, 1, 0)
@@ -27,6 +28,7 @@ type CharacterControlProps = {
   near?: number
   far?: number
   initialPosition?: [number, number, number]
+  canControl: boolean
 }
 
 export const CharacterControl = ({
@@ -39,12 +41,21 @@ export const CharacterControl = ({
   near = 0.1,
   far = 300,
   initialPosition = [0, 0, 0],
+  canControl = true,
 }: CharacterControlProps) => {
   const playerRef = useRef<Group>(null)
   const orbitControlRef = useRef<OrbitControlsImpl>(null)
   const rigidBodyRef = useRef<RapierRigidBody>(null)
+  const [cC, setCanControl] = usePlayerStore((state) => [
+    state.canControl,
+    state.setCanControl,
+  ])
 
-  const { forward, backward, left, right } = useControls()
+  const { forward, backward, left, right } = useControls(canControl)
+
+  useEffect(() => {
+    setCanControl(canControl)
+  }, [canControl])
 
   useFrame(({ camera }) => {
     if (rigidBodyRef.current && playerRef.current) {

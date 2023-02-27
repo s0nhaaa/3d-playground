@@ -14,7 +14,7 @@ const keys: KeyObject = {
 
 const moveFieldByKey = (key: string) => keys[key]
 
-export const useControls = () => {
+export const useControls = (canControl: boolean) => {
   const [movement, setMovement] = useState({
     forward: false,
     backward: false,
@@ -25,8 +25,10 @@ export const useControls = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) =>
+      canControl &&
       setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }))
     const handleKeyUp = (e: KeyboardEvent) =>
+      canControl &&
       setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: false }))
 
     document.addEventListener('keydown', handleKeyDown)
@@ -36,7 +38,7 @@ export const useControls = () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('keyup', handleKeyUp)
     }
-  }, [])
+  }, [canControl])
 
   return movement
 }
