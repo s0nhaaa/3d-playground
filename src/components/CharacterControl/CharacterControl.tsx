@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { CuboidCollider, RapierRigidBody, RigidBody } from '@react-three/rapier'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { Group, Quaternion, Vector3 } from 'three'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
@@ -19,6 +19,7 @@ const frontVector = new Vector3()
 const sideVector = new Vector3()
 
 type CharacterControlProps = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   children: any
   speed?: number
   distance?: [number, number]
@@ -29,6 +30,9 @@ type CharacterControlProps = {
   far?: number
   initialPosition?: [number, number, number]
   canControl: boolean
+  onCharacterMove?: (character: Group) => void
+  onAnimationChange?: () => void
+  frameOffset?: number
 }
 
 export const CharacterControl = ({
@@ -42,24 +46,32 @@ export const CharacterControl = ({
   far = 300,
   initialPosition = [0, 0, 0],
   canControl = true,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onCharacterMove = () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onAnimationChange = () => {},
+  frameOffset = 5,
 }: CharacterControlProps) => {
   const playerRef = useRef<Group>(null)
   const orbitControlRef = useRef<OrbitControlsImpl>(null)
   const rigidBodyRef = useRef<RapierRigidBody>(null)
-  const [cC, setCanControl] = usePlayerStore((state) => [
-    state.canControl,
-    state.setCanControl,
-  ])
+  const [setCanControl] = usePlayerStore((state) => [state.setCanControl])
+  const frameCount = useRef(0)
 
-  const { forward, backward, left, right } = useControls(canControl)
+  const { forward, backward, left, right } = useControls()
 
   useEffect(() => {
     setCanControl(canControl)
   }, [canControl])
 
+  useEffect(() => {
+    onAnimationChange()
+  }, [forward, backward, left, right])
+
   useFrame(({ camera }) => {
     if (rigidBodyRef.current && playerRef.current) {
       const velocity = rigidBodyRef.current.linvel()
+      frameCount.current += 1
 
       if (forward || backward || left || right) {
         const angleYCameraDirection = Math.atan2(
@@ -76,6 +88,11 @@ export const CharacterControl = ({
         walkDirection.y = 0
         walkDirection.normalize()
         walkDirection.applyAxisAngle(rotateAngle, dO)
+
+        if (frameCount.current % frameOffset === 0) {
+          onCharacterMove(playerRef.current)
+          frameCount.current = 0
+        }
       }
 
       frontVector.set(0, 0, Number(backward) - Number(forward))

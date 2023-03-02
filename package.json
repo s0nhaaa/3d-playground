@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "@sonhaaa/3d-playground",
-  "version": "0.0.18",
+  "version": "0.0.20",
   "description": "Experiment components built on top of @react-three/fiber",
   "main": "build/index.js",
   "files": [
@@ -16,7 +16,9 @@
     "lint:styles": "stylelint \"**/*.css\" --fix",
     "lint": "npm-run-all lint:ts lint:styles",
     "format": "prettier --write .",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "release": "npm run build && npm publish",
+    "dev": "npm run release && cd demo && npm start"
   },
   "keywords": [
     "@react-three/fiber",

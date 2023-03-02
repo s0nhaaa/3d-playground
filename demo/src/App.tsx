@@ -1,13 +1,19 @@
 import { Canvas } from '@react-three/fiber'
 import { Debug, Physics, RigidBody } from '@react-three/rapier'
-import { CharacterControl } from '@sonhaaa/test-playground'
+import { CharacterControl, useCharacterControl } from '@sonhaaa/test-playground'
 import { useState } from 'react'
+import { Group } from 'three'
 
 // import { useEffect } from 'react'
 import Boy from './Boy'
 
 function App() {
   const [cC, set] = useState(true)
+  const anim = useCharacterControl(['idle', 'run'])
+
+  const onCharacterMove = (character: Group) => {
+    console.log(character.position.x)
+  }
 
   return (
     <div className="app">
@@ -29,12 +35,14 @@ function App() {
           </RigidBody>
           <CharacterControl
             canControl={cC}
-            targetListener="abc"
             polarAngle={[0.5, Math.PI / 2]}
             cameraPosition={[17, 6, 17]}
             initialPosition={[4, 5, 1]}
+            onCharacterMove={onCharacterMove}
+            onAnimationChange={() => console.log(anim)}
+            frameOffset={12}
           >
-            <Boy />
+            <Boy anim={anim} />
           </CharacterControl>
         </Physics>
       </Canvas>

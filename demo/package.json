@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "npm uninstall @sonhaaa/test-playground && npm i @sonhaaa/test-playground && npm run dev",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -12,7 +13,7 @@
     "@react-three/drei": "9.45.0",
     "@react-three/fiber": "8.9.1",
     "@react-three/rapier": "^0.13.2",
-    "@sonhaaa/test-playground": "^0.0.26",
+    "@sonhaaa/test-playground": "^0.0.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "0.146.0"

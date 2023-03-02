@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import { usePlayerStore } from '../stores/player'
+
 interface KeyObject {
   [key: string]: string
 }
@@ -14,7 +16,7 @@ const keys: KeyObject = {
 
 const moveFieldByKey = (key: string) => keys[key]
 
-export const useControls = (canControl: boolean) => {
+export const useControls = () => {
   const [movement, setMovement] = useState({
     forward: false,
     backward: false,
@@ -22,6 +24,7 @@ export const useControls = (canControl: boolean) => {
     right: false,
     jump: false,
   })
+  const canControl = usePlayerStore((state) => state.canControl)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) =>
