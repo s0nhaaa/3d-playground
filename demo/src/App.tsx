@@ -1,23 +1,30 @@
 import { Canvas } from '@react-three/fiber'
 import { Debug, Physics, RigidBody } from '@react-three/rapier'
 import { CharacterControl, useCharacterControl } from '@sonhaaa/test-playground'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Group } from 'three'
 
 // import { useEffect } from 'react'
 import Boy from './Boy'
 
+const T = memo(() => {
+  const [count, setCount] = useState(0)
+  console.log('t rerender')
+
+  return <button onClick={() => setCount(count + 1)}>Up</button>
+})
+
 function App() {
   const [cC, set] = useState(true)
   const anim = useCharacterControl(['idle', 'run'])
 
-  const onCharacterMove = (character: Group) => {
-    console.log(character.position.x)
-  }
+  const onCharacterMove = (character: Group) => {}
+
+  console.log('app rerender')
 
   return (
     <div className="app">
-      <Canvas id="abc">
+      {/* <Canvas id="abc">
         <gridHelper />
         <ambientLight intensity={1} />
 
@@ -45,7 +52,8 @@ function App() {
             <Boy anim={anim} />
           </CharacterControl>
         </Physics>
-      </Canvas>
+      </Canvas> */}
+      <T />
       <button onClick={() => set(!cC)}>Off</button>
     </div>
   )

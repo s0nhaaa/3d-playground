@@ -1,7 +1,13 @@
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { CuboidCollider, RapierRigidBody, RigidBody } from '@react-three/rapier'
-import { useEffect, useMemo, useRef } from 'react'
+import {
+  CuboidCollider,
+  RapierRigidBody,
+  RigidBody,
+  RigidBodyProps,
+  RigidBodyTypeString,
+} from '@react-three/rapier'
+import { useEffect, useRef } from 'react'
 import { Group, Quaternion, Vector3 } from 'three'
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 
@@ -33,10 +39,16 @@ type CharacterControlProps = {
   onCharacterMove?: (character: Group) => void
   onAnimationChange?: () => void
   frameOffset?: number
+  type?: RigidBodyTypeString
+  makeDefault?: boolean
+  state?: 'static' | 'dynamic'
+  onStateChange?: (rigidBody: RapierRigidBody, character: Group) => void
 }
 
 export const CharacterControl = ({
   children,
+  type = 'dynamic',
+  makeDefault = true,
   speed = 15,
   distance = [17, 17],
   polarAngle = [Math.PI / 4, Math.PI / 2 - 0.05],
@@ -51,6 +63,9 @@ export const CharacterControl = ({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onAnimationChange = () => {},
   frameOffset = 5,
+  state = 'dynamic',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onStateChange = () => {},
 }: CharacterControlProps) => {
   const playerRef = useRef<Group>(null)
   const orbitControlRef = useRef<OrbitControlsImpl>(null)
@@ -67,6 +82,12 @@ export const CharacterControl = ({
   useEffect(() => {
     onAnimationChange()
   }, [forward, backward, left, right])
+
+  useEffect(() => {
+    rigidBodyRef.current &&
+      playerRef.current &&
+      onStateChange(rigidBodyRef.current, playerRef.current)
+  }, [state])
 
   useFrame(({ camera }) => {
     if (rigidBodyRef.current && playerRef.current) {
@@ -106,7 +127,6 @@ export const CharacterControl = ({
         { x: direction.x, y: velocity.y, z: direction.z },
         true,
       )
-
       const translation = rigidBodyRef.current.translation()
 
       const cameraPositionOffset = camera.position.sub(
@@ -145,14 +165,14 @@ export const CharacterControl = ({
         maxPolarAngle={polarAngle[1]}
       />
       <PerspectiveCamera
-        makeDefault
+        makeDefault={makeDefault}
         near={near}
         far={far}
         position={cameraPosition}
       />
       <group name="player">
         <RigidBody
-          type="dynamic"
+          type={type}
           ref={rigidBodyRef}
           position={initialPosition}
           colliders={false}
